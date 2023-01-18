@@ -33,7 +33,7 @@ public class TodoService {
                 .build();
     }
     //할 일 등록
-    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO){
+    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO) throws RuntimeException{
         todoRepository.save(createRequestDTO.toEntity());
         log.info("할 일이 저장되었씁니다. 제목 : {} ",createRequestDTO.getTitle());
 
@@ -42,7 +42,7 @@ public class TodoService {
 
 
     //할 일 수정 ( 제목 , 할 일 완료 여부)
-    public TodoListResponseDTO update(final String id,final TodoModifyRequestDTO modifyRequestDTO){
+    public TodoListResponseDTO update(final String id,final TodoModifyRequestDTO modifyRequestDTO) throws RuntimeException{
         Optional<TodoEntity> targetEntity = todoRepository.findById(id);
         targetEntity.ifPresent(entity -> {
             entity.setTitle(modifyRequestDTO.getTitle());
