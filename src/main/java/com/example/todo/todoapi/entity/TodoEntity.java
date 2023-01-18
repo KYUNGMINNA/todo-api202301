@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "todoId")
+@Builder
 @Entity
 @Table(name = "tbl_todo")
 public class TodoEntity {
