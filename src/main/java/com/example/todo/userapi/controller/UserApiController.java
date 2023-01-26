@@ -10,15 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@CrossOrigin
 public class UserApiController {
 
     private final UserService userService;
@@ -55,6 +53,21 @@ public class UserApiController {
                     .badRequest()
                     .body(e.getMessage());
         }
+    }
+
+    //이메일 중복확인 요청 처리
+    //GET :/api/auth/check?email=
+    @GetMapping("/check")              //@아무것도 안 붙여도 @RequestParam 붙여짐 
+    public ResponseEntity<?> checkEmail(String email){
+        
+        //@RequestParam 에 boolean required() default true; 라서  스프링에서 알아서 badRequest날리지만 , 보험을 위해 작성해둠
+        if (email ==null || email.trim().equals("")){
+            return ResponseEntity.badRequest().body("이메일을 전달해 주세요");
+        }
+
+        boolean flag = userService.isDuplicate(email);
+        log.info("{} 중복 여부 ?? = {}",email,flag);
+        return ResponseEntity.ok().body(flag);
     }
 
 
