@@ -2,6 +2,7 @@ package com.example.todo.userapi.service;
 
 import com.example.todo.userapi.dto.UserSignUpDTO;
 import com.example.todo.userapi.dto.UserSignUpResponseDTO;
+import com.example.todo.userapi.entity.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,47 @@ class UserServiceTest {
         //then
         System.out.println("responseDTO = " + responseDTO);
         assertEquals("암호맨",responseDTO.getUserName());
+    }
+
+
+    @Test
+    @DisplayName("존재하지 안는 이메일로 로그인을 시도하면 Exception이 발생해야 한다.")
+    void noUserTest(){
+        //given
+        String email="asdasdasxzc@qweqweqwe.com";
+        String password="1234";
+
+        //when
+        //then
+        assertThrows(RuntimeException.class,()->{
+            userService.getByCredentials(email,password);
+        });
+    }
+    @Test
+    @DisplayName("틀린 비밀번호로 로그인을 시도하면 Exception이 발생해야 한다.")
+    void invalidaPasswordTest(){
+        //given
+        String email="postman@naver.com";
+        String password="1234zxczaasdasd1!";
+
+        //when
+        //then
+        assertThrows(RuntimeException.class,()->{
+            userService.getByCredentials(email,password);
+        });
+    }
+    @Test
+    @DisplayName("정확한 정보로 로그인을 시도하면 회원정보를 반환되어야 한다")
+    void loginTest(){
+        //given
+        String email="abc1234@aaa.com";
+        String password="abc1234!";
+
+        //when
+        UserEntity loginUser = userService.getByCredentials(email, password);
+        //then
+        assertEquals("고고",loginUser.getUserName());
+
     }
 
 }
