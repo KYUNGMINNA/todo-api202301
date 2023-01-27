@@ -1,5 +1,7 @@
 package com.example.todo.config;
 
+import com.example.todo.security.JwtAuthFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,10 +10,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.CorsFilter;
 
 //@Configuration // 설정 파일로 등록하겠다
 @EnableWebSecurity //스프링 부트가 지원하는 자동 설정 지원함
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
 
     //패스워드 인코딩 클래스를 등록
     // <bean id=? class=? / >
@@ -42,6 +48,13 @@ public class WebSecurityConfig {
                 //그 외의 모든 경로는 인증을 거쳐야 함
                 .anyRequest().authenticated();
 
+
+        //토큰 인증 필터 등록  --토큰 필터는 일반적으로 CorsFilter 앞에 붙임
+        http.addFilterAfter(
+                jwtAuthFilter
+                , CorsFilter.class //Spring의 Cors FIlter !!! -- import 주의
+
+        );
         return http.build();
     }
 
