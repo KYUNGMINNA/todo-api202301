@@ -23,8 +23,8 @@ public class TodoService {
 
     //할 일 목록 조회
     @Transactional
-    public TodoListResponseDTO retrieve(){
-        List<TodoEntity> entityList = todoRepository.findAll();
+    public TodoListResponseDTO retrieve(String userId){
+        List<TodoEntity> entityList = todoRepository.findByUserId(userId);
 
         List<TodoDetailResponseDTO> dtoList = entityList.stream()
                                     .map(te -> new TodoDetailResponseDTO(te))
@@ -35,27 +35,42 @@ public class TodoService {
                 .build();
     }
     //할 일 등록
-    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO) throws RuntimeException{
-        todoRepository.save(createRequestDTO.toEntity());
+    public TodoListResponseDTO create(final TodoCreateRequestDTO createRequestDTO,final String userId) throws RuntimeException{
+
+
+        TodoEntity todo = createRequestDTO.toEntity();
+        // todo.setUserId(userRepository.findBYId(userId)) --TodoCreateRequestDTO 의 필드는 title만 있는데 ,
+        // 실제 save할 때는 Entity형태로 있어서 User에 값을 채워야하는데 ,JPA 사용하려면 Reposotiry를 호출해야
+        // 하는 일이 발생함 --> 최적화 이슈가 발생하게 됨
+        todo.setUserId(userId);
+
+
+        todoRepository.save(todo);
+
+
+
+
+
+
         log.info("할 일이 저장되었씁니다. 제목 : {} ",createRequestDTO.getTitle());
 
-        return retrieve();
+        return retrieve(userId);
     }
 
 
     //할 일 수정 ( 제목 , 할 일 완료 여부)
-    public TodoListResponseDTO update(final String id,final TodoModifyRequestDTO modifyRequestDTO) throws RuntimeException{
+    public TodoListResponseDTO update(final String id,final TodoModifyRequestDTO modifyRequestDTO,String userId) throws RuntimeException{
         Optional<TodoEntity> targetEntity = todoRepository.findById(id);
         targetEntity.ifPresent(entity -> {
             entity.setTitle(modifyRequestDTO.getTitle());
             entity.setDone(modifyRequestDTO.isDone());
             todoRepository.save(entity);
         });
-        return retrieve();
+        return retrieve(userId);
     }
 
     //할 일 삭제
-    public TodoListResponseDTO delete(final String id){
+    public TodoListResponseDTO delete(final String id,String userId){
         try {
             todoRepository.deleteById(id);
         } catch (Exception e) {
@@ -63,7 +78,7 @@ public class TodoService {
                     ,id,e.getMessage());
             throw new RuntimeException("id가 존재하지 않아 삭제에 실패하였습니다.");
         }
-        return retrieve();
+        return retrieve(userId);
 
     }
 

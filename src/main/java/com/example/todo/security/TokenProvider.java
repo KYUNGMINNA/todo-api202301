@@ -56,7 +56,7 @@ public class TokenProvider {
                 //클라이언트 토큰의 서명과 서버발급당시 서명을 비교
                 //위조되지 않았다면 body에 페이로드(=Claims)를 리턴
                 //위조 되었으면 예외를 발생시킴
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();// Claims가 Body임 --> Claims에 토큰에 관한 정보 다 들어 있음
 
         return claims.getSubject();

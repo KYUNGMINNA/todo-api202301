@@ -44,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 //시큐리티 정보 생성
                 // 인증 완료!! api서버에서는 SecurityContextHolder에 등록해야 인증된 사용자라고 생각한다.
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userId, // 컨트롤러의 @AuthenticationPrincipal 값
+                        userId, // 인증 정보 값(다른 것도 가능) :: 컨트롤러의 @AuthenticationPrincipal 값 -->컨트롤러에 이 어노테이션 붙이면 인증 정보 값을 보여줌
                         null, // 권한 등록
                         AuthorityUtils.NO_AUTHORITIES
                 );
@@ -56,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(securityContext);
             }
         } catch (Exception e) {
+//            e.printStackTrace();
             log.error("인증되지 않은 사용자입니다.");
         }
 
