@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/todos")
 @RequiredArgsConstructor
 //CORS 허용 설정
-@CrossOrigin // 나중에 배포 할 때에도 클라이언트 앱의 URL을 적어야 함 !! -- @CrossOrigin(origins="")으로 특정 URL만 가능
+//@CrossOrigin  나중에 배포 할 때에도 클라이언트 앱의 URL을 적어야 함 !! -- @CrossOrigin(origins="")으로 특정 URL만 가능
 public class TodoApiController {
     private final TodoService todoService;
 
